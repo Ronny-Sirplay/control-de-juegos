@@ -1,0 +1,18 @@
+Read me
+Paso 1: crear el repositorio
+
+Entra a github.com con tu cuenta (créala en github.com/signup si no tienes).
+Arriba a la derecha, el ícono + → New repository.
+Repository name: por ejemplo control-de-juegos.
+Public (obligatorio para GitHub Pages gratis; ya vimos que el código queda visible pero los datos no, porque piden inicio de sesión).
+Marca Add a README file, así el repositorio no queda vacío.
+Create repository.
+
+Paso 2: activar GitHub Pages
+
+Dentro del repositorio, pestaña Settings.
+En el menú de la izquierda, Pages.
+En Build and deployment → Source, elige Deploy from a branch.
+En Branch, elige main y la carpeta / (root), luego Save.
+Espera un minuto y recarga esa misma página. Arriba te mostrará la dirección, algo como:
+https://tu-usuario.github.io/control-de-juegos/

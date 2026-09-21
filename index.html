@@ -739,11 +739,18 @@ function whoChip(){
 
 /* ============ render principal ============ */
 function render(){
+  const prevList=$('#rv-list'); const prevScroll=prevList?prevList.scrollTop:null;
+  const prevActive=document.activeElement; const prevSel=prevActive&&prevActive.dataset?prevActive.dataset.f:null;
+  const prevG=prevActive&&prevActive.closest?(()=>{const r=prevActive.closest('.grow');return r?r.dataset.g:null;})():null;
   if(UI.view==='auth'){ $('#app').innerHTML=authView(); return; }
   if(UI.view==='loading'){ $('#app').innerHTML=loadingView(); return; }
   if(UI.view==='users'){ $('#app').innerHTML=usersView(); return; }
   if(UI.view==='control'&&DB.detail){ $('#app').innerHTML=controlView(controlComoC()); refreshObsList(); renderSyncDot();
-    if(UI.tab==='review'&&window.matchMedia('(max-width:980px)').matches){const on=$('.pv.on');if(on&&on.scrollIntoView)on.scrollIntoView({inline:'center',block:'nearest'});}
+    if(UI.tab==='review'){
+      const l=$('#rv-list'); if(l&&prevScroll!=null) l.scrollTop=prevScroll;
+      if(prevSel&&prevG){ const sel=`.grow[data-g="${prevG}"] [data-f="${prevSel}"]`; const el=$(sel); if(el&&el!==document.activeElement){ const pos=prevActive&&prevActive.selectionStart; el.focus({preventScroll:true}); if(pos!=null&&el.setSelectionRange)try{el.setSelectionRange(pos,pos);}catch(e){} } }
+      if(window.matchMedia('(max-width:980px)').matches){const on=$('.pv.on');if(on&&on.scrollIntoView)on.scrollIntoView({inline:'center',block:'nearest'});}
+    }
     if(UI.tab==='caps') hidratarCapturas();
     return;
   }
@@ -1227,7 +1234,7 @@ document.addEventListener('click',async e=>{
     case 'markall':{const p=pv();if(!p)break;await marcarPendientesComoFunciona(p.id);renderGames();refreshStats();break;}
     case 'resetprov':{const p=pv();if(!p)break;confirmDlg('Reiniciar estados','Todos los juegos de “'+p.n+'” volverán a pendiente. Las observaciones se conservan.','Reiniciar',async()=>{closeDlg();await reiniciarProveedor(p.id);renderGames();refreshStats();});break;}
     case 'filter': UI.filter=t.dataset.f;renderGames();refreshStats();break;
-    case 'cycle':{ const row=t.closest('.grow'); await ciclarEstado(row.dataset.g); const f=findGame(row.dataset.g); if(f){row.outerHTML=rowHTML(f.g,true);refreshStats(); const btn=$(`.grow[data-g="${f.g.id}"] .cb`); if(f.g.s===2){const ob=$(`.grow[data-g="${f.g.id}"] .gobs`);if(ob)ob.focus();else if(btn)btn.focus();}else if(btn)btn.focus(); } break;}
+    case 'cycle':{ const row=t.closest('.grow'); await ciclarEstado(row.dataset.g); const f=findGame(row.dataset.g); if(f){row.outerHTML=rowHTML(f.g,true);refreshStats(); const btn=$(`.grow[data-g="${f.g.id}"] .cb`); if(f.g.s===2){const ob=$(`.grow[data-g="${f.g.id}"] .gobs`);if(ob)ob.focus({preventScroll:true});else if(btn)btn.focus({preventScroll:true});}else if(btn)btn.focus({preventScroll:true}); } break;}
     case 'delg':{ const row=t.closest('.grow'),p=pv(),idx=p.g.findIndex(g=>g.id===row.dataset.g),g=p.g[idx]; eliminarJuegoConDeshacer(p,idx,g); break;}
     case 'undo': if(UNDO){clearTimeout(UNDO.timer);UNDO.pv.g.splice(UNDO.idx,0,UNDO.g);UNDO=null;render();$('#toast').hidden=true;} break;
     case 'evid': evidDlg(t.closest('.grow').dataset.g);break;
